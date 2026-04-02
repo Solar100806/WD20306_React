@@ -1,0 +1,17 @@
+{
+  "movies": [
+    {
+      "title": "abc",
+      "director": "abc",
+      "year": "1998",
+      "id": 1
+    },
+    {
+      "title": "abc",
+      "director": "abc",
+      "year": "1222",
+      "id": 2
+    }
+  ],
+  "users": []
+}
