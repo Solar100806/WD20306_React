@@ -1,55 +1,38 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { Button, Form, Input, Skeleton } from "antd";
 import axios from "axios";
 import { useEffect } from "react";
-import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
+import useCRUDStory from "../hooks/useCRUDStory";
 
 function EditPage() {
   const [form] = Form.useForm();
   const navigate = useNavigate();
   const { id } = useParams();
-  const queryClient = useQueryClient();
 
-  // Fetch movie details
+  // Lấy chi tiết truyện theo id
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['movies', id],
+    queryKey: ["stories", id],
     queryFn: async () => {
-      const response = await axios.get(`http://localhost:3000/movies/${id}`);
-      return response.data;
-    }
+      const res = await axios.get(`http://localhost:3000/stories/${id}`);
+      return res.data;
+    },
+    enabled: !!id,
   });
 
-  // Populate form when data is loaded
+  // Điền dữ liệu vào form khi đã load xong
   useEffect(() => {
     if (data) {
       form.setFieldsValue(data);
     }
   }, [data, form]);
 
-  // Update mutation
-  const updateMutation = useMutation({
-    mutationFn: async (updatedData: any) => {
-      const res = await axios.put(`http://localhost:3000/movies/${id}`, updatedData);
-      return res.data;
-    },
-    onSuccess: () => {
-      toast.success("Cập nhật thành công");
-      queryClient.invalidateQueries({ queryKey: ['movies'] });
-      navigate('/list');
-    },
-    onError: () => {
-      toast.error("Cập nhật thất bại");
-    }
-  });
+  // Lấy hàm update từ useCRUDStory
+  const { update, isUpdating } = useCRUDStory();
 
-  const onFinish = (values: any) => {
-    updateMutation.mutate(values);
-  };
-
-  const onFinishFailed = (errorInfo: any) => {
-    console.log("Failed:", errorInfo);
-    toast.error("Vui lòng kiểm tra lại thông tin");
+  const onFinish = (values: Record<string, string>) => {
+    update(id!, values);
+    navigate("/list");
   };
 
   if (isLoading) return <div className="p-6"><Skeleton active /></div>;
@@ -57,29 +40,35 @@ function EditPage() {
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-semibold mb-6">Cập nhật</h1>
+      <h1 className="text-2xl font-semibold mb-6">Chỉnh sửa truyện</h1>
 
-      <Form 
-        form={form} 
-        onFinish={onFinish} 
-        onFinishFailed={onFinishFailed} 
-        layout="vertical" 
-        className="space-y-6"
-        disabled={updateMutation.isPending}
+      <Form
+        form={form}
+        onFinish={onFinish}
+        layout="vertical"
+        disabled={isUpdating}
       >
-        <Form.Item label="Title" name="title" rules={[{ required: true, message: "Vui lòng nhập title" }]}>
-          <Input placeholder="Nhập tên phim" />
+        <Form.Item
+          label="Tên truyện"
+          name="title"
+          rules={[{ required: true, message: "Vui lòng nhập tên truyện" }]}
+        >
+          <Input placeholder="Nhập tên truyện" />
         </Form.Item>
 
-        <Form.Item label="Tác giả" name="director" rules={[{required: true, message: "Vui lòng nhập tên tác giả"}]}>
+        <Form.Item
+          label="Tác giả"
+          name="author"
+          rules={[{ required: true, message: "Vui lòng nhập tên tác giả" }]}
+        >
           <Input placeholder="Nhập tên tác giả" />
         </Form.Item>
 
-        <Form.Item label="Năm phát hành" name="year" rules={[{required: true, message: "Vui lòng nhập năm phát hành"}]}>
-          <Input type="number" placeholder="Nhập năm phát hành"/>
+        <Form.Item label="Mô tả" name="description">
+          <Input.TextArea placeholder="Nhập mô tả" rows={3} />
         </Form.Item>
 
-        <Button type="primary" htmlType="submit" loading={updateMutation.isPending}>
+        <Button type="primary" htmlType="submit" loading={isUpdating}>
           Cập nhật
         </Button>
       </Form>
@@ -88,4 +77,3 @@ function EditPage() {
 }
 
 export default EditPage;
-

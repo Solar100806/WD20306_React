@@ -1,31 +1,20 @@
-import { createContext, useContext, useState } from "react";
-
-type IconMode = "sun" | "moon";
-
-type ThemeContextType = {
-  icon: IconMode;
-  toggleIcon: () => void;
-};
+import { createContext, ReactNode, useState } from "react";
+import { ThemeContextType } from "../types/Theme";
 
 export const ThemeContext = createContext<ThemeContextType | null>(null);
 
-export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [icon, setIcon] = useState<IconMode>("sun");
+export const ThemeProvider = ({ children }: { children: ReactNode }) => {
+  const [theme, setTheme] = useState("light");
 
-  const toggleIcon = () => {
-    setIcon((prev) => (prev === "sun" ? "moon" : "sun"));
+  const toggleTheme = () => {
+    setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
   };
 
   return (
-    <ThemeContext.Provider value={{ icon, toggleIcon }}>
-      {children}
-    </ThemeContext.Provider>
+    <div>
+      <ThemeContext.Provider value={{ theme, toggleTheme }}>
+        {children}
+      </ThemeContext.Provider>
+    </div>
   );
-}
-
-// ---- Custom Hook ----
-export function useTheme() {
-  const ctx = useContext(ThemeContext);
-  if (!ctx) throw new Error("useTheme phải dùng bên trong ThemeProvider");
-  return ctx;
-}
+};

@@ -1,23 +1,12 @@
-import { createContext, useContext, useState } from "react";
-
-export type User = {
-  name: string;
-  avatar: string;
-};
-
-type UserContextType = {
-  user: User | null;
-  login: (user: User) => void;
-  logout: () => void;
-};
+import React, { createContext, ReactNode, useState } from "react";
+import { User, UserContextType } from "../types/User";
 
 export const UserContext = createContext<UserContextType | null>(null);
 
-export function UserProvider({ children }: { children: React.ReactNode }) {
+export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
-
-  const login = (userData: User) => {
-    setUser(userData);
+  const login = (user: User) => {
+    setUser(user);
   };
 
   const logout = () => {
@@ -25,14 +14,8 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <UserContext.Provider value={{ user, login, logout }}>
+    <UserContext.Provider value={{ user, setUser, login, logout }}>
       {children}
     </UserContext.Provider>
   );
-}
-
-export function useUser() {
-  const ctx = useContext(UserContext);
-  if (!ctx) throw new Error("useUser phải dùng bên trong UserProvider");
-  return ctx;
-}
+};

@@ -1,16 +1,22 @@
 {
-  "movies": [
+  "stories": [
     {
-      "title": "abc",
-      "director": "abc",
-      "year": "1998",
-      "id": 1
+      "id": 1,
+      "title": "Đắc Nhân Tâm",
+      "author": "Dale Carnegie",
+      "description": "Cuốn sách kinh điển về nghệ thuật giao tiếp và ứng xử với con người."
     },
     {
-      "title": "abc",
-      "director": "abc",
-      "year": "1222",
-      "id": 2
+      "id": 2,
+      "title": "Nhà Giả Kim",
+      "author": "Paulo Coelho",
+      "description": "Hành trình tìm kiếm kho báu và khám phá ý nghĩa cuộc sống."
+    },
+    {
+      "id": 3,
+      "title": "Tuổi Trẻ Đáng Giá Bao Nhiêu",
+      "author": "Rosie Nguyễn",
+      "description": "Cuốn sách truyền cảm hứng dành cho giới trẻ Việt Nam."
     }
   ],
   "users": []
